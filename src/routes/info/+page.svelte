@@ -18,13 +18,26 @@
 	];
 
 	const books = [
-		"Computer Systems: A Programmer's Perspective",
-		'Operating Systems: Three Easy Pieces',
-		'The C Programming Language',
-		'A Tour of C++',
-		'TCP/IP Illustrated',
-		'Inside the Machine',
-		'Modern X86 Assembly Language Programming'
+		{ title: "C++ A Beginner's Guide", file: "C++ A Beginner's Guide.pdf" },
+		{
+			title: "Computer Systems: A Programmer's Perspective",
+			file: "Computer Systems A Programmer's Perspective.pdf"
+		},
+		{ title: 'Crafting Interpreters', file: 'Crafting Interpreters.pdf' },
+		{ title: 'Fundamentals of Computer Graphics', file: 'Fundamentals of Computer Graphics.pdf' },
+		{ title: 'Inside the Machine', file: 'Inside the Machine.pdf' },
+		{ title: 'Learning the vi and Vim editors', file: 'Learning the vi and Vim editors.pdf' },
+		{
+			title: 'Modern X86 Assembly Language Programming',
+			file: 'Modern X86 Assembly Language Programming.pdf'
+		},
+		{
+			title: 'Operating Systems: Three Easy Pieces',
+			file: 'Operating Systems Three Easy Pieces.pdf'
+		},
+		{ title: 'TCP-IP Illustrated', file: 'TCP-IP Illustrated.pdf' },
+		{ title: 'The Ansi C Programming Language', file: 'The Ansi C Programming Language.pdf' },
+		{ title: 'Windows Kernel Guide', file: 'Windows Kernel Guide.pdf' }
 	];
 
 	let emailCopied = $state(false);
@@ -48,8 +61,8 @@
 		showModal = false;
 	}
 
-	function downloadBook(bookTitle: string) {
-		console.log('Download:', bookTitle);
+	function downloadBook(file: string) {
+		window.open(`/data/books/${file}`, '_blank');
 	}
 </script>
 
@@ -62,7 +75,8 @@
 	<div class="section">
 		<h2 class="section-title">About</h2>
 		<p class="about-text">
-			I'm a student who likes low-level and systems programming. I enjoy solving problems that require deep technical understanding.
+			I'm a student who likes low-level and systems programming. I enjoy solving problems that
+			require deep technical understanding.
 		</p>
 	</div>
 
@@ -130,8 +144,8 @@
 				{#if activeTab === 'books'}
 					<div class="books-list">
 						{#each books as book}
-							<button class="book-item" on:click={() => downloadBook(book)}>
-								{book}
+							<button class="book-item" onclick={() => downloadBook(book.file)}>
+								{book.title}
 							</button>
 						{/each}
 					</div>
