@@ -62,7 +62,8 @@
 	}
 
 	function downloadBook(file: string) {
-		window.open(`/data/books/${file}`, '_blank');
+		const encoded = encodeURIComponent(file);
+		window.open(`/data/books/${encoded}`, '_blank');
 	}
 </script>
 
@@ -85,7 +86,7 @@
 		<div class="contact-list">
 			<div class="contact-row">
 				<span class="contact-label">Email</span>
-				<button class="email-copy" on:click={copyEmail}>
+				<button class="email-copy" onclick={copyEmail}>
 					<span class="email-text">me [at] sammy [dot] sh</span>
 					<span class="copy-hint">{emailCopied ? 'Copied!' : 'Click to copy'}</span>
 				</button>
@@ -113,28 +114,28 @@
 	<div class="section">
 		<div class="more-section">
 			<span class="more-label">More:</span>
-			<button class="more-link" on:click={() => openModal('books')}>Books</button>
+			<button class="more-link" onclick={() => openModal('books')}>Books</button>
 			<span class="more-separator">•</span>
-			<button class="more-link" on:click={() => openModal('tech')}>Tech</button>
+			<button class="more-link" onclick={() => openModal('tech')}>Tech</button>
 		</div>
 	</div>
 </div>
 
 {#if showModal}
-	<div class="modal-overlay" on:click={closeModal}>
-		<div class="modal" on:click={(e) => e.stopPropagation()}>
+	<div class="modal-overlay" onclick={closeModal}>
+		<div class="modal" onclick={(e) => e.stopPropagation()}>
 			<div class="modal-tabs">
 				<button
 					class="modal-tab"
 					class:active={activeTab === 'books'}
-					on:click={() => (activeTab = 'books')}
+					onclick={() => (activeTab = 'books')}
 				>
 					Books
 				</button>
 				<button
 					class="modal-tab"
 					class:active={activeTab === 'tech'}
-					on:click={() => (activeTab = 'tech')}
+					onclick={() => (activeTab = 'tech')}
 				>
 					Tech
 				</button>
