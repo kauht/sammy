@@ -62,9 +62,7 @@
 	<div class="section">
 		<h2 class="section-title">About</h2>
 		<p class="about-text">
-			I work on low-level systems programming and compiler design. I spend most of my time writing
-			C++, learning about operating systems internals, and exploring how software interfaces with
-			hardware.
+			I'm a student who likes low-level and systems programming. I enjoy solving problems that require deep technical understanding.
 		</p>
 	</div>
 
