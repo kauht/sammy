@@ -14,7 +14,7 @@
 	.bg-fixed {
 		position: fixed;
 		inset: 0;
-		z-index: -1;
+		z-index: -10;
 		background: radial-gradient(ellipse at 50% 50%, #202020, #181818 50%, #0a0a0a);
 		pointer-events: none;
 	}
@@ -35,8 +35,5 @@
 		background-size: var(--d) var(--d);
 		mask-image: radial-gradient(ellipse 90% 90% at 50% 50%, #fff 5%, transparent 80%);
 		pointer-events: none;
-	}
-	.content {
-		min-height: 100vh;
 	}
 </style>

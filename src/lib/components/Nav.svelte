@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { tweened } from 'svelte/motion';
+	import { Tween } from 'svelte/motion';
 	import { cubicOut } from 'svelte/easing';
 	import { onMount } from 'svelte';
 
@@ -12,59 +12,38 @@
 		{ name: 'Notes', href: '#notes' }
 	];
 
-	const getActiveIndex = (hash: string) => {
-		if (hash === '#info' || hash === '') return 0;
-		if (hash === '#work') return 1;
-		if (hash === '#blog') return 2;
-		if (hash === '#notes') return 3;
-		return 0;
-	};
-
-	let active = $state(typeof window !== 'undefined' ? getActiveIndex(window.location.hash) : 0);
+	const tabMap: Record<string, number> = { '#info': 0, '': 0, '#work': 1, '#blog': 2, '#notes': 3 };
+	let active = $state(typeof window !== 'undefined' ? (tabMap[window.location.hash] ?? 0) : 0);
 	let container: HTMLDivElement;
 	let buttons: HTMLButtonElement[] = [];
 	let hasMeasured = $state(false);
 
-	const estimatedTabWidth = 85;
-
-	function getInitialPosition() {
-		const hash = typeof window !== 'undefined' ? window.location.hash : '';
-		const index = getActiveIndex(hash);
-		const left = 5 + index * (estimatedTabWidth + 8);
-		return {
-			left,
-			width: estimatedTabWidth,
-			centerX: left + estimatedTabWidth / 2
-		};
-	}
-
-	const initial = getInitialPosition();
-	const pillLeft = tweened(initial.left, { duration: 300, easing: cubicOut });
-	const pillWidth = tweened(initial.width, { duration: 300, easing: cubicOut });
-	const glowX = tweened(initial.centerX, { duration: 300, easing: cubicOut });
+	const pillLeft = new Tween(5, { duration: 300, easing: cubicOut });
+	const pillWidth = new Tween(85, { duration: 300, easing: cubicOut });
+	const glowX = new Tween(47.5, { duration: 300, easing: cubicOut });
 
 	function measure() {
 		if (!container || !buttons[active]) return;
-		const c = container.getBoundingClientRect();
-		const b = buttons[active].getBoundingClientRect();
-		const left = Math.round(b.left - c.left);
-		const width = Math.max(24, Math.round(b.width));
+		const left = Math.round(
+			buttons[active].getBoundingClientRect().left - container.getBoundingClientRect().left
+		);
+		const width = Math.max(24, Math.round(buttons[active].getBoundingClientRect().width));
 		const centerX = Math.round(left + width / 2);
 
-		if (!hasMeasured) {
+		if (hasMeasured) {
+			pillLeft.target = left;
+			pillWidth.target = width;
+			glowX.target = centerX;
+		} else {
 			pillLeft.set(left, { duration: 0 });
 			pillWidth.set(width, { duration: 0 });
 			glowX.set(centerX, { duration: 0 });
 			hasMeasured = true;
-		} else {
-			pillLeft.set(left, { duration: 300 });
-			pillWidth.set(width, { duration: 300 });
-			glowX.set(centerX, { duration: 300 });
 		}
 	}
 
 	function handleHashChange() {
-		active = getActiveIndex(window.location.hash);
+		active = tabMap[window.location.hash] ?? 0;
 		measure();
 	}
 
@@ -88,32 +67,20 @@
 		<div class="track-outer"></div>
 		<div class="track-inner"></div>
 
-		<div
-			class="glow"
-			style="left: {$glowX}px; transform: translateX(-50%);"
-			aria-hidden="true"
-		></div>
-
+		<div class="glow" style="left: {glowX.current}px; transform: translateX(-50%);"></div>
 		<div
 			class="pill"
-			style="transform: translateX({$pillLeft}px); width: {$pillWidth}px;"
-			aria-hidden="true"
+			style="transform: translateX({pillLeft.current}px); width: {pillWidth.current}px;"
 		></div>
 
 		{#each tabs as tab, i (tab.name)}
 			<button
-				type="button"
 				class="tab"
 				class:active={active === i}
 				bind:this={buttons[i]}
-				on:click={() => {
-					location.hash = tab.href;
-				}}
-				aria-current={active === i ? 'page' : undefined}
+				onclick={() => (location.hash = tab.href)}
 			>
-				<span class="label" style:opacity={active === i ? 1 : 0.66}>
-					{tab.name}
-				</span>
+				<span class="label" style:opacity={active === i ? 1 : 0.66}>{tab.name}</span>
 			</button>
 		{/each}
 	</div>
@@ -123,7 +90,8 @@
 	.nav {
 		position: fixed;
 		top: 16px;
-		inset-inline: 0;
+		left: 0;
+		right: 0;
 		z-index: 1000;
 		display: flex;
 		justify-content: center;
@@ -170,7 +138,7 @@
 	.track-inner {
 		position: absolute;
 		inset: 1px;
-		border-radius: calc(999px - 1px);
+		border-radius: 999px;
 		background: linear-gradient(180deg, #3c3c3c 0%, #2d2d2d 100%);
 		box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.45);
 		pointer-events: none;
@@ -204,14 +172,12 @@
 	}
 
 	.tab {
-		position: relative;
 		z-index: 3;
 		flex: 1;
 		height: 100%;
 		display: flex;
 		align-items: center;
 		justify-content: center;
-		background: transparent;
 		cursor: pointer;
 		border-radius: 999px;
 		user-select: none;
