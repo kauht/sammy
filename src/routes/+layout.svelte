@@ -29,7 +29,7 @@
 				<h1 class="name">Sammy</h1>
 				<div
 					class="fill-bar"
-					on:animationend={() => {
+					onanimationend={() => {
 						isSliding = true;
 						setTimeout(() => {
 							isLoading = false;
@@ -48,6 +48,7 @@
 	<div class="layout-wrapper">
 		<Nav {isSliding} />
 		<main class="main-content" class:reveal={isSliding}>
+			<!-- svelte-ignore slot_element_deprecated -->
 			<slot />
 		</main>
 		<Footer />
