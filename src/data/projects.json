@@ -1,0 +1,58 @@
+[
+	{
+		"name": "Pallas",
+		"type": "WIP",
+		"description": "A modern systems language you actually want to use.",
+		"tags": ["C++", "Compiler Design", "Language Design"],
+		"source": "https://github.com/kauht/Pallas",
+		"image": ""
+	},
+	{
+		"name": "Metis",
+		"type": "WIP",
+		"description": "A chess engine implementing minimax with alpha-beta pruning.",
+		"tags": ["C++", "Algorithms"],
+		"source": "https://github.com/kauht/Metis",
+		"image": ""
+	},
+	{
+		"name": "Athena",
+		"type": "WIP",
+		"description": "3D rhythm game built with raylib featuring real-time rendering and audio synchronization.",
+		"tags": ["C++", "raylib", "3D Graphics"],
+		"source": "https://github.com/kauht/Athena",
+		"image": ""
+	},
+	{
+		"name": "Kaught CS2",
+		"type": "Complete",
+		"description": "A basic CS2 cheat with ESP, aimbot, and more written in C++.",
+		"tags": ["C++", "Reverse Engineering", "Windows API"],
+		"source": "https://github.com/kauht/kaught-cs2",
+		"image": ""
+	},
+	{
+		"name": "Sammy CRT",
+		"type": "Complete",
+		"description": "A mini C runtime library written in assembly and C using system calls.",
+		"tags": ["Assembly", "C", "Systems"],
+		"source": "https://github.com/kauht/sammy-crt",
+		"image": ""
+	},
+	{
+		"name": "ADAN",
+		"type": "Contribution",
+		"description": "A modern syntactically simpel programming language by Lily.",
+		"tags": ["C", "Compiler Design", "Open Source"],
+		"source": "https://github.com/cappucina/ADAN",
+		"image": ""
+	},
+	{
+		"name": "Example Project 2",
+		"type": "EXAMPLE",
+		"description": "Added new features and documentation.",
+		"tags": ["TypeScript", "Web"],
+		"source": "https://github.com/placeholder",
+		"image": ""
+	}
+]
