@@ -18,7 +18,7 @@
 	{
 		"name": "Athena",
 		"type": "WIP",
-		"description": "3D rhythm game built with raylib featuring real-time rendering and audio synchronization.",
+		"description": "A cool 3D rhythm game built with raylib.",
 		"tags": ["C++", "raylib", "3D Graphics"],
 		"source": "https://github.com/kauht/Athena",
 		"image": ""
