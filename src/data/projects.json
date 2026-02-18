@@ -42,7 +42,7 @@
 	{
 		"name": "ADAN",
 		"type": "Contribution",
-		"description": "A modern syntactically elegant programming language by Lily.",
+		"description": "A elegant and syntactically simple, modern programming language by Lily, written in C.",
 		"tags": ["C", "Compiler Design", "Open Source"],
 		"source": "https://github.com/cappucina/ADAN",
 		"image": ""
