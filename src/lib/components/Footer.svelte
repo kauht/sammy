@@ -1,15 +1,15 @@
 <footer class="footer">
 	<div class="separator"></div>
 	<div class="items">
-		<a class="link" href="https://github.com/kauht/" target="_blank" rel="noopener noreferrer"
+		<a class="link" href="https://discord.gg/mh6xQrN5jP/" target="_blank" rel="noopener noreferrer"
 			>Community</a
 		>
 		<span class="dot">•</span>
-		<a class="link" href="https://github.com/kauht/sammy" target="_blank" rel="noopener noreferrer"
+		<a class="link" href="https://github.com/kauht/sammy/" target="_blank" rel="noopener noreferrer"
 			>Source</a
 		>
 		<span class="dot">•</span>
-		<a class="link" href="https://github.com/kauht/sammy" target="_blank" rel="noopener noreferrer"
+		<a class="link" href="https://github.com/kauht/" target="_blank" rel="noopener noreferrer"
 			>Contribute</a
 		>
 	</div>
