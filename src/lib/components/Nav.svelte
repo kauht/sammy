@@ -1,113 +1,127 @@
 <script lang="ts">
-	import { Tween } from 'svelte/motion';
-	import { cubicOut } from 'svelte/easing';
-	import { onMount } from 'svelte';
-
-	let { isSliding = $bindable(false) } = $props();
+	import { onMount, onDestroy } from "svelte";
 
 	const tabs = [
-		{ name: 'Info', href: '#info' },
-		{ name: 'Work', href: '#work' },
-		{ name: 'Blog', href: '#blog' },
-		{ name: 'Notes', href: '#notes' }
+		{ name: "Info", href: "#info" },
+		{ name: "Work", href: "#work" },
+		{ name: "Blog", href: "#blog" },
+		{ name: "Notes", href: "#notes" }
 	];
 
-	const tabMap: Record<string, number> = { '#info': 0, '': 0, '#work': 1, '#blog': 2, '#notes': 3 };
-	let active = $state(typeof window !== 'undefined' ? (tabMap[window.location.hash] ?? 0) : 0);
-	let container: HTMLDivElement;
-	let buttons: HTMLButtonElement[] = [];
-	let hasMeasured = $state(false);
+	export let isSliding: boolean = false;
 
-	const pillLeft = new Tween(5, { duration: 300, easing: cubicOut });
-	const pillWidth = new Tween(85, { duration: 300, easing: cubicOut });
-	const glowX = new Tween(47.5, { duration: 300, easing: cubicOut });
+	let track: HTMLElement | null = null;
+	let active = 0;
+	let pillLeft = 0;
+	let pillWidth = 80;
+	let glowX = 40;
+
+	const idxFromHash = (h = "") => tabs.findIndex((t) => t.href === h) || 0;
 
 	function measure() {
-		if (!container || !buttons[active]) return;
-		const left = Math.round(
-			buttons[active].getBoundingClientRect().left - container.getBoundingClientRect().left
-		);
-		const width = Math.max(24, Math.round(buttons[active].getBoundingClientRect().width));
-		const centerX = Math.round(left + width / 2);
+		if (!track) return;
 
-		if (hasMeasured) {
-			pillLeft.target = left;
-			pillWidth.target = width;
-			glowX.target = centerX;
-		} else {
-			pillLeft.set(left, { duration: 0 });
-			pillWidth.set(width, { duration: 0 });
-			glowX.set(centerX, { duration: 0 });
-			hasMeasured = true;
-		}
-	}
+		const btns = Array.from(track.querySelectorAll("button.tab")) as HTMLElement[];
+		const btn = btns[active];
+		if (!btn) return;
 
-	function handleHashChange() {
-		active = tabMap[window.location.hash] ?? 0;
-		measure();
+		const tRect = track.getBoundingClientRect();
+		const bRect = btn.getBoundingClientRect();
+
+		const left = Math.round(bRect.left - tRect.left);
+		const width = Math.max(64, Math.round(bRect.width)); // enforce a reasonable min width
+		const center = Math.round(left + width / 2);
+
+		pillLeft = left;
+		pillWidth = width;
+		glowX = center;
 	}
 
 	onMount(() => {
-		measure();
-		window.addEventListener('resize', measure);
-		window.addEventListener('hashchange', handleHashChange);
-		const ro = new ResizeObserver(measure);
-		ro.observe(container);
-		buttons.forEach((b) => b && ro.observe(b));
-		return () => {
-			window.removeEventListener('resize', measure);
-			window.removeEventListener('hashchange', handleHashChange);
-			ro.disconnect();
+		if (typeof window !== "undefined") {
+			active = idxFromHash(window.location.hash);
+		}
+
+		// measure after paint
+		requestAnimationFrame(measure);
+
+		const onResize = () => requestAnimationFrame(measure);
+		const onHash = () => {
+			if (typeof window === "undefined") return;
+			active = idxFromHash(window.location.hash);
+			requestAnimationFrame(measure);
 		};
+
+		window.addEventListener("resize", onResize);
+		window.addEventListener("hashchange", onHash);
+
+		onDestroy(() => {
+			window.removeEventListener("resize", onResize);
+			window.removeEventListener("hashchange", onHash);
+		});
 	});
 </script>
 
 <div class="nav" class:animate={isSliding}>
-	<div bind:this={container} class="track">
-		<div class="track-outer"></div>
-		<div class="track-inner"></div>
+	<div bind:this={track} class="track" role="tablist" aria-label="Main navigation">
+		<div class="track-outer" aria-hidden="true"></div>
+		<div class="track-inner" aria-hidden="true"></div>
 
-		<div class="glow" style="left: {glowX.current}px; transform: translateX(-50%);"></div>
+		<div
+			class="glow"
+			style="left: {glowX}px; transform: translateX(-50%);"
+			aria-hidden="true"
+		></div>
+
 		<div
 			class="pill"
-			style="transform: translateX({pillLeft.current}px); width: {pillWidth.current}px;"
+			style="transform: translateX({pillLeft}px); width: {pillWidth}px;"
+			aria-hidden="true"
 		></div>
 
 		{#each tabs as tab, i (tab.name)}
 			<button
 				class="tab"
 				class:active={active === i}
-				bind:this={buttons[i]}
-				onclick={() => (location.hash = tab.href)}
+				on:click={() => {
+					if (typeof location !== "undefined") location.hash = tab.href;
+					active = i;
+					requestAnimationFrame(measure);
+				}}
+				role="tab"
+				aria-current={active === i ? "true" : "false"}
 			>
-				<span class="label" style:opacity={active === i ? 1 : 0.66}>{tab.name}</span>
+				<span class="label" aria-hidden="false">{tab.name}</span>
 			</button>
 		{/each}
 	</div>
 </div>
 
 <style>
+	/* container */
 	.nav {
 		position: fixed;
 		top: 16px;
 		left: 0;
 		right: 0;
-		z-index: 1000;
 		display: flex;
 		justify-content: center;
 		padding: 8px 0;
-		opacity: 0;
-		transform: translateY(-40px);
+		z-index: 1000;
 	}
 
 	.nav.animate {
-		animation: slideDown 500ms cubic-bezier(0.4, 0, 0.2, 1) 400ms forwards;
+		animation: slideDown 500ms cubic-bezier(0.4, 0, 0.2, 1) 400ms both;
 	}
 
 	@keyframes slideDown {
+		from {
+			transform: translateY(-40px);
+			opacity: 0;
+		}
 		to {
-			opacity: 1;
 			transform: translateY(0);
+			opacity: 1;
 		}
 	}
 
@@ -118,9 +132,9 @@
 		gap: 8px;
 		min-width: 340px;
 		height: 50px;
-		padding: 5px;
+		padding: 5px 6px;
 		border-radius: 999px;
-		overflow: visible;
+		box-sizing: border-box;
 	}
 
 	.track-outer {
@@ -133,6 +147,7 @@
 			inset 0 -1px 1px rgba(255, 255, 255, 0.06);
 		backdrop-filter: blur(8px);
 		pointer-events: none;
+		z-index: 0;
 	}
 
 	.track-inner {
@@ -142,6 +157,7 @@
 		background: linear-gradient(180deg, #3c3c3c 0%, #2d2d2d 100%);
 		box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.45);
 		pointer-events: none;
+		z-index: 1;
 	}
 
 	.pill {
@@ -150,13 +166,16 @@
 		left: 0;
 		height: 40px;
 		border-radius: 999px;
-		background: rgba(99, 99, 99, 0.2);
+		background: rgba(99, 99, 99, 0.22);
 		backdrop-filter: blur(6px);
 		box-shadow:
 			inset 0 1px 4px rgba(0, 0, 0, 0.22),
 			0 0 0 1px rgba(255, 255, 255, 0.06);
 		pointer-events: none;
-		will-change: transform, width;
+		transition:
+			transform 200ms cubic-bezier(0.22, 1, 0.36, 1),
+			width 200ms cubic-bezier(0.22, 1, 0.36, 1);
+		z-index: 2;
 	}
 
 	.glow {
@@ -164,30 +183,52 @@
 		top: -2px;
 		height: 2px;
 		width: 28px;
-		border-radius: 3px 3px 0 0;
+		border-radius: 3px;
 		background: #d9d9d9;
 		box-shadow: 0 18px 40px 12px rgba(255, 255, 255, 0.2);
 		pointer-events: none;
-		will-change: left;
+		transition: left 200ms cubic-bezier(0.22, 1, 0.36, 1);
+		z-index: 2;
 	}
 
 	.tab {
+		position: relative;
 		z-index: 3;
-		flex: 1;
+		flex: 1 1 auto;
+		min-width: 72px;
 		height: 100%;
 		display: flex;
 		align-items: center;
 		justify-content: center;
 		cursor: pointer;
 		border-radius: 999px;
-		user-select: none;
+		background: transparent;
+		border: none;
+		padding: 0 8px;
+		box-sizing: border-box;
+	}
+
+	.tab:focus {
+		outline: none;
 	}
 
 	.label {
+		display: inline-block;
 		font-size: 12px;
 		font-weight: 600;
 		color: #fff;
 		transition: opacity 160ms ease;
 		letter-spacing: 0.4px;
+		text-align: center;
+		text-shadow: 0 1px 0 rgba(0, 0, 0, 0.5);
+		pointer-events: none;
+	}
+
+	.tab.active .label {
+		opacity: 1;
+	}
+
+	.tab .label {
+		opacity: 0.75;
 	}
 </style>

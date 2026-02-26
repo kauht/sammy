@@ -1,15 +1,16 @@
 <script lang="ts">
-	import './layout.css';
-	import Nav from '$lib/components/Nav.svelte';
-	import Background from '$lib/components/Background.svelte';
-	import Footer from '$lib/components/Footer.svelte';
-	import { onMount } from 'svelte';
+	import "./layout.css";
+	import Nav from "$lib/components/Nav.svelte";
+	import Background from "$lib/components/Background.svelte";
+	import Footer from "$lib/components/Footer.svelte";
+	import { onMount } from "svelte";
 
-	let isLoading = $state(true);
-	let isSliding = $state(false);
+	let isLoading: boolean = true;
+	let isSliding: boolean = false;
+	let fallbackTimer: ReturnType<typeof setTimeout> | null = null;
 
 	onMount(() => {
-		const fallback = setTimeout(() => {
+		fallbackTimer = setTimeout(() => {
 			isSliding = true;
 			setTimeout(() => {
 				isLoading = false;
@@ -17,7 +18,10 @@
 		}, 5000);
 
 		return () => {
-			clearTimeout(fallback);
+			if (fallbackTimer !== null) {
+				clearTimeout(fallbackTimer);
+				fallbackTimer = null;
+			}
 		};
 	});
 </script>
@@ -29,7 +33,7 @@
 				<h1 class="name">Sammy</h1>
 				<div
 					class="fill-bar"
-					onanimationend={() => {
+					on:animationend={() => {
 						isSliding = true;
 						setTimeout(() => {
 							isLoading = false;
@@ -39,6 +43,7 @@
 			</div>
 		</div>
 	</div>
+
 	<div class="rounded-div-wrap" class:slide-up={isSliding}>
 		<div class="rounded-div"></div>
 	</div>
@@ -48,7 +53,6 @@
 	<div class="layout-wrapper">
 		<Nav {isSliding} />
 		<main class="main-content" class:reveal={isSliding}>
-			<!-- svelte-ignore slot_element_deprecated -->
 			<slot />
 		</main>
 		<Footer />
@@ -60,19 +64,14 @@
 		position: fixed;
 		inset: 0;
 		z-index: 9999;
-		background: #181818;
+		background: var(--bg-01);
 		display: flex;
 		align-items: center;
 		justify-content: center;
-		overflow: visible;
 		transform: translateY(0) translateZ(0);
-		transition: transform 600ms cubic-bezier(0.4, 0, 0.2, 1);
+		transition: transform var(--anim-long) var(--anim-ease);
 		will-change: transform;
 		backface-visibility: hidden;
-	}
-
-	.loading-screen.slide-up {
-		transform: translateY(calc(-100vh - 200px));
 	}
 
 	.rounded-div-wrap {
@@ -83,12 +82,13 @@
 		height: 200px;
 		overflow: hidden;
 		pointer-events: none;
-		z-index: 9999;
+		z-index: 9998;
 		transform: translateY(0) translateZ(0);
-		transition: transform 600ms cubic-bezier(0.4, 0, 0.2, 1);
+		transition: transform var(--anim-long) var(--anim-ease);
 		will-change: transform;
 	}
 
+	.loading-screen.slide-up,
 	.rounded-div-wrap.slide-up {
 		transform: translateY(calc(-100vh - 200px));
 	}
@@ -99,15 +99,13 @@
 		left: -10%;
 		width: 120%;
 		height: 350px;
-		background: #181818;
+		background: var(--bg-01);
 		border-radius: 0 0 50% 50%;
 	}
 
-	.loading-content {
-		text-align: center;
-	}
-
+	.loading-content,
 	.name-container {
+		text-align: center;
 		position: relative;
 		overflow: hidden;
 	}
@@ -115,30 +113,26 @@
 	.name {
 		font-size: 3.5rem;
 		font-weight: 700;
-		color: rgba(255, 255, 255, 0.2);
+		color: var(--text-subtle);
 		margin: 0;
 		letter-spacing: -0.03em;
-		font-family: 'ObviouslyVariable', 'Inter', system-ui, sans-serif;
 		position: relative;
 	}
 
 	.fill-bar {
 		position: absolute;
-		top: 0;
-		left: 0;
-		bottom: 0;
+		inset: 0;
 		width: 0;
-		background: #fff;
+		background: var(--text);
 		-webkit-background-clip: text;
 		background-clip: text;
 		color: transparent;
 		font-size: 3.5rem;
 		font-weight: 700;
 		letter-spacing: -0.03em;
-		font-family: 'ObviouslyVariable', 'Inter', system-ui, sans-serif;
 		overflow: hidden;
 		pointer-events: none;
-		animation: fillText 900ms cubic-bezier(0.05, 0.95, 0.1, 1) 300ms forwards;
+		animation: fillText var(--anim-long) var(--anim-ease) var(--anim-fast) forwards;
 	}
 
 	@keyframes fillText {
@@ -148,9 +142,9 @@
 	}
 
 	.fill-bar::before {
-		content: 'Sammy';
+		content: "Sammy";
 		display: block;
-		color: #fff;
+		color: var(--text);
 		white-space: nowrap;
 	}
 
@@ -160,17 +154,20 @@
 		flex-direction: column;
 		position: relative;
 		z-index: 10;
+		align-items: center;
 	}
 
 	.main-content {
 		flex: 1;
 		width: 100%;
-		padding: 6rem 2rem 2rem;
+		max-width: var(--content-max-width, 1100px);
+		padding: 6rem var(--content-padding, 2rem) 2rem;
+		box-sizing: border-box;
 		opacity: 0;
 		transform: translateY(40px);
 		transition:
-			opacity 1000ms cubic-bezier(0.4, 0, 0.2, 1),
-			transform 1000ms cubic-bezier(0.4, 0, 0.2, 1);
+			opacity var(--anim-long) var(--anim-ease),
+			transform var(--anim-long) var(--anim-ease);
 	}
 
 	.main-content.reveal {
@@ -178,17 +175,22 @@
 		transform: translateY(0);
 	}
 
+	.content-inner {
+		max-width: var(--content-max-width);
+		width: 100%;
+		padding: 0 var(--content-padding);
+		margin: 0 auto;
+		box-sizing: border-box;
+	}
+
 	@media (min-width: 768px) {
 		.main-content {
-			padding: 6rem 4rem 4rem;
+			padding: 6rem calc(var(--content-padding, 2rem) * 2) 4rem;
 		}
 	}
 
 	@media (max-width: 768px) {
-		.name {
-			font-size: 2.5rem;
-		}
-
+		.name,
 		.fill-bar,
 		.fill-bar::before {
 			font-size: 2.5rem;

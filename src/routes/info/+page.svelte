@@ -1,20 +1,25 @@
-<script lang="ts">
+<script>
+	import Chip from "$lib/components/Chip.svelte";
+	import PersonalModal from "$lib/modals/PersonalModal.svelte";
+	import BooksModal from "$lib/modals/BooksModal.svelte";
+	import TechModal from "$lib/modals/TechModal.svelte";
+
 	const tech = [
-		{ category: 'Languages', items: ['C/C++'] },
-		{ category: 'Editors', items: ['Zed', 'Neovim'] },
-		{ category: 'OS', items: ['Arch Linux', 'Windows 11'] },
-		{ category: 'Hardware', items: ['i5-12600KF', 'RTX 3060 Ti', '32GB DDR4'] }
+		{ category: "Languages", items: ["C/C++"] },
+		{ category: "Editors", items: ["Zed", "Neovim"] },
+		{ category: "OS", items: ["Arch Linux", "Windows 11"] },
+		{ category: "Hardware", items: ["i5-12600KF", "RTX 3060 Ti", "32GB DDR4"] }
 	];
 
 	const interests = [
-		'Compiler Design',
-		'Systems Programming',
-		'Operating Systems',
-		'Assembly',
-		'Graphics Programming',
-		'Linear Algebra',
-		'Data Structures & Algorithms',
-		'Open Source'
+		"Open Source",
+		"Data Structures & Algorithms",
+		"Systems Programming",
+		"Embedded Systems",
+		"Compiler Design",
+		"Assembly",
+		"Graphics Programming",
+		"Linear Algebra"
 	];
 
 	const books = [
@@ -23,523 +28,378 @@
 			title: "Computer Systems: A Programmer's Perspective",
 			file: "Computer Systems A Programmer's Perspective.pdf"
 		},
-		{ title: 'Crafting Interpreters', file: 'Crafting Interpreters.pdf' },
-		{ title: 'Fundamentals of Computer Graphics', file: 'Fundamentals of Computer Graphics.pdf' },
-		{ title: 'Inside the Machine', file: 'Inside the Machine.pdf' },
-		{ title: 'Learning the vi and Vim editors', file: 'Learning the vi and Vim editors.pdf' },
+		{ title: "Crafting Interpreters", file: "Crafting Interpreters.pdf" },
+		{ title: "Fundamentals of Computer Graphics", file: "Fundamentals of Computer Graphics.pdf" },
+		{ title: "Inside the Machine", file: "Inside the Machine.pdf" },
+		{ title: "Learning the vi and Vim editors", file: "Learning the vi and Vim editors.pdf" },
 		{
-			title: 'Modern X86 Assembly Language Programming',
-			file: 'Modern X86 Assembly Language Programming.pdf'
+			title: "Modern X86 Assembly Language Programming",
+			file: "Modern X86 Assembly Language Programming.pdf"
 		},
 		{
-			title: 'Operating Systems: Three Easy Pieces',
-			file: 'Operating Systems Three Easy Pieces.pdf'
+			title: "Operating Systems: Three Easy Pieces",
+			file: "Operating Systems Three Easy Pieces.pdf"
 		},
-		{ title: 'TCP-IP Illustrated', file: 'TCP-IP Illustrated.pdf' },
-		{ title: 'The Ansi C Programming Language', file: 'The Ansi C Programming Language.pdf' },
-		{ title: 'Windows Kernel Guide', file: 'Windows Kernel Guide.pdf' }
+		{ title: "TCP-IP Illustrated", file: "TCP-IP Illustrated.pdf" },
+		{ title: "The Ansi C Programming Language", file: "The Ansi C Programming Language.pdf" },
+		{ title: "Windows Kernel Guide", file: "Windows Kernel Guide.pdf" }
 	];
 
-	let emailCopied = $state(false);
-	let showModal = $state(false);
-	let activeTab = $state<'tech' | 'books'>('books');
+	const colors = ["#6A0DAD", "#B58EFF", "#000000", "#0D6BFF"];
+	const genres = ["Dystopian", "Fantasy", "Fiction", "Technical"];
+	const anime = [
+		"Toradora!",
+		"Horimiya",
+		"Classroom of the Elite",
+		"Forest of Piano",
+		"Junji Ito Collection",
+		"Heavenly Delusion",
+		"A Silent Voice"
+	];
+
+	let emailCopied = false;
+
+	let showPersonal = false;
+	let showBooks = false;
+	let showTech = false;
 
 	function copyEmail() {
-		navigator.clipboard.writeText('me@sammy.sh');
+		void navigator.clipboard.writeText("me@sammy.sh");
 		emailCopied = true;
-		setTimeout(() => {
-			emailCopied = false;
-		}, 2000);
+		setTimeout(() => (emailCopied = false), 1800);
 	}
 
-	function openModal(tab: 'tech' | 'books') {
-		activeTab = tab;
-		showModal = true;
+	function openPersonal() {
+		closeAll();
+		showPersonal = true;
 	}
 
-	function closeModal() {
-		showModal = false;
+	function openBooks() {
+		closeAll();
+		showBooks = true;
 	}
 
-	function downloadBook(file: string) {
-		const encoded = encodeURIComponent(file);
-		window.open(`/data/books/${encoded}`, '_blank');
+	function openTech() {
+		closeAll();
+		showTech = true;
+	}
+
+	function downloadBook(file) {
+		if (typeof window !== "undefined") window.open(`/books/${file}`, "_blank");
+	}
+
+	function closeAll() {
+		showPersonal = false;
+		showBooks = false;
+		showTech = false;
 	}
 </script>
 
-<div class="info-container">
-	<div class="hero">
-		<h1 class="name">Sammy</h1>
-		<p class="tagline">Student • 17 • Rahh</p>
-	</div>
+<section class="page">
+	<header class="hero">
+		<div class="hero-inner">
+			<h1 class="title">Sammy</h1>
+			<p class="subtitle">Student • 17 • Rahh</p>
+		</div>
+	</header>
 
-	<div class="section">
-		<h2 class="section-title">About</h2>
-		<p class="about-text">
-			I'm a student who likes low-level and systems programming. I enjoy solving problems that
-			require deep technical understanding.
-		</p>
-	</div>
+	<main class="main">
+		<section class="info-section">
+			<h2 class="section-title">About</h2>
+			<p class="lead">
+				I'm a student who's focused on low-level and systems programming. I enjoy implementing
+				solutions to problems that require deep technical understanding.
+			</p>
+		</section>
 
-	<div class="section">
-		<h2 class="section-title">Contact</h2>
-		<div class="contact-list">
-			<div class="contact-row">
-				<span class="contact-label">Email</span>
-				<button class="email-copy" onclick={copyEmail}>
-					<span class="email-text">me [at] sammy [dot] sh</span>
-					<span class="copy-hint">{emailCopied ? 'Copied!' : 'Click to copy'}</span>
+		<section class="info-section">
+			<h2 class="section-title">Contact</h2>
+			<dl class="contact-grid">
+				<div class="contact-row">
+					<dt class="contact-term">Email</dt>
+					<dd class="contact-def">
+						<button
+							class="copy"
+							type="button"
+							on:click={copyEmail}
+							aria-live="polite"
+							aria-pressed={emailCopied}
+						>
+							<span class="mono">me [at] sammy [dot] sh</span>
+							<span class="copied">{emailCopied ? "Copied!" : "Click to copy"}</span>
+						</button>
+					</dd>
+				</div>
+
+				<div class="contact-row">
+					<dt class="contact-term">Discord</dt>
+					<dd class="contact-def">@sammy or @yuhbayn</dd>
+				</div>
+
+				<div class="contact-row">
+					<dt class="contact-term">GitHub</dt>
+					<dd class="contact-def">
+						<a
+							class="link"
+							href="https://github.com/kauht"
+							target="_blank"
+							rel="noopener noreferrer"
+							style="color: rgba(180, 200, 255, 0.95) !important;"
+						>
+							@kauht
+						</a>
+					</dd>
+				</div>
+			</dl>
+		</section>
+
+		<section class="info-section">
+			<h2 class="section-title">Interests</h2>
+			<div class="chips">
+				{#each interests as interest (interest)}
+					<Chip>{interest}</Chip>
+				{/each}
+			</div>
+		</section>
+
+		<section class="info-section actions">
+			<h2 class="section-title">More</h2>
+			<div class="action-links">
+				<button type="button" class="plain" on:click={openPersonal} aria-haspopup="dialog">
+					Personal
 				</button>
-			</div>
-			<div class="contact-row">
-				<span class="contact-label">Discord</span>
-				<span class="contact-value">@sammy or @yuhbayn</span>
-			</div>
-			<div class="contact-row">
-				<span class="contact-label">GitHub</span>
-				<a href="https://github.com/kauht" target="_blank" class="contact-link">@kauht</a>
-			</div>
-		</div>
-	</div>
 
-	<div class="section">
-		<h2 class="section-title">Interests</h2>
-		<div class="skills-container">
-			{#each interests as interest (interest)}
-				<div class="skill-tag">{interest}</div>
-			{/each}
-		</div>
-	</div>
+				<span class="dot">•</span>
 
-	<div class="section">
-		<div class="more-section">
-			<span class="more-label">More:</span>
-			<button class="more-link" onclick={() => openModal('books')}>Books</button>
-			<span class="more-separator">•</span>
-			<button class="more-link" onclick={() => openModal('tech')}>Tech</button>
-		</div>
-	</div>
-</div>
-
-{#if showModal}
-	<div class="modal-overlay" onclick={closeModal}>
-		<div class="modal" onclick={(e) => e.stopPropagation()}>
-			<div class="modal-tabs">
-				<button
-					class="modal-tab"
-					class:active={activeTab === 'books'}
-					onclick={() => (activeTab = 'books')}
-				>
+				<button type="button" class="plain" on:click={openBooks} aria-haspopup="dialog">
 					Books
 				</button>
-				<button
-					class="modal-tab"
-					class:active={activeTab === 'tech'}
-					onclick={() => (activeTab = 'tech')}
-				>
+
+				<span class="dot">•</span>
+
+				<button type="button" class="plain" on:click={openTech} aria-haspopup="dialog">
 					Tech
 				</button>
 			</div>
+		</section>
+	</main>
+</section>
 
-			<div class="modal-content">
-				{#if activeTab === 'books'}
-					<div class="books-list">
-						{#each books as book}
-							<button class="book-item" onclick={() => downloadBook(book.file)}>
-								{book.title}
-							</button>
-						{/each}
-					</div>
-				{:else}
-					<div class="tech-content">
-						{#each tech as item (item.category)}
-							<div class="tech-category-modal">
-								<span class="tech-category-label-modal">{item.category}</span>
-								<div class="tech-items-modal">
-									{#each item.items as techItem}
-										<span class="tech-item-modal">{techItem}</span>
-									{/each}
-								</div>
-							</div>
-						{/each}
-					</div>
-				{/if}
-			</div>
-		</div>
-	</div>
+{#if showPersonal}
+	<PersonalModal {colors} {genres} {anime} on:close={() => (showPersonal = false)} />
+{/if}
+
+{#if showBooks}
+	<BooksModal
+		{books}
+		on:close={() => (showBooks = false)}
+		on:download={(e) => downloadBook(e.detail.file)}
+	/>
+{/if}
+
+{#if showTech}
+	<TechModal {tech} on:close={() => (showTech = false)} />
 {/if}
 
 <style>
-	.info-container {
-		max-width: 700px;
+	:global(body) {
+		margin: 0;
+		font-family:
+			system-ui,
+			-apple-system,
+			"Segoe UI",
+			Roboto,
+			"Helvetica Neue",
+			Arial;
+		background: linear-gradient(180deg, var(--bg-01) 0%, var(--bg-02) 100%);
+		color: var(--text);
+	}
+
+	.page {
+		max-width: 860px;
 		margin: 0 auto;
-		padding: 3rem 0;
-		display: flex;
-		flex-direction: column;
-		gap: 3rem;
+		padding: 48px 20px;
 	}
 
 	.hero {
-		display: flex;
-		flex-direction: column;
-		align-items: center;
-		gap: 0.75rem;
-		padding: 2rem 0;
+		margin-bottom: 28px;
+		border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+		padding-bottom: 18px;
 	}
 
-	.name {
-		font-size: 2.5rem;
-		font-weight: 700;
-		color: #fff;
+	.hero-inner {
+		max-width: 820px;
+	}
+
+	.title {
+		margin: 0;
+		font-size: 36px;
+		font-weight: 800;
 		letter-spacing: -0.02em;
+		color: #fff;
 	}
 
-	.tagline {
-		font-size: 1rem;
-		color: rgba(255, 255, 255, 0.5);
-		text-align: center;
+	.subtitle {
+		margin: 6px 0 0;
+		color: rgba(234, 238, 242, 0.66);
+		font-size: 16px;
 	}
 
-	.section {
-		display: flex;
-		flex-direction: column;
-		gap: 1.5rem;
+	.main {
+		display: grid;
+		grid-template-columns: 1fr;
+		gap: 20px;
+	}
+
+	.info-section {
+		padding: 6px 0 6px 0;
 	}
 
 	.section-title {
-		font-size: 1.5rem;
-		font-weight: 600;
+		display: inline-block;
+		margin: 0 0 8px 0;
+		font-size: 16px;
+		font-weight: 700;
 		color: #fff;
-		letter-spacing: -0.01em;
+		position: relative;
+		padding-bottom: 6px;
 	}
 
-	.about-text {
-		font-size: 1rem;
-		line-height: 1.7;
-		color: rgba(255, 255, 255, 0.7);
+	.section-title::after {
+		content: "";
+		display: block;
+		height: 2px;
+		width: 56px;
+		border-radius: 2px;
+		margin-top: 6px;
+		background: linear-gradient(90deg, rgba(180, 200, 255, 0.14), rgba(140, 180, 255, 0.08));
 	}
 
-	.skills-container {
-		display: flex;
-		flex-wrap: wrap;
-		gap: 0.75rem;
+	.lead {
+		margin: 0;
+		color: rgba(234, 238, 242, 0.86);
+		line-height: 1.6;
+		font-size: 15px;
 	}
 
-	.skill-tag {
-		padding: 0.625rem 1.25rem;
-		background: rgba(99, 99, 99, 0.2);
-		backdrop-filter: blur(6px);
-		border-radius: 999px;
-		font-size: 0.875rem;
-		font-weight: 500;
-		color: rgba(255, 255, 255, 0.85);
-		box-shadow:
-			inset 0 1px 4px rgba(0, 0, 0, 0.22),
-			0 0 0 1px rgba(255, 255, 255, 0.15);
-	}
-
-	.tech-grid {
-		display: flex;
-		flex-direction: column;
-		gap: 1.25rem;
-	}
-
-	.tech-category {
-		display: flex;
-		flex-direction: column;
-		gap: 0.5rem;
-	}
-
-	.tech-category-label {
-		font-size: 0.8125rem;
-		font-weight: 600;
-		color: rgba(255, 255, 255, 0.45);
-		text-transform: uppercase;
-		letter-spacing: 0.05em;
-	}
-
-	.tech-items {
-		display: flex;
-		flex-wrap: wrap;
-		gap: 0.625rem;
-	}
-
-	.tech-item {
-		padding: 0.5rem 1rem;
-		background: rgba(60, 60, 60, 0.4);
-		border: 1px solid rgba(255, 255, 255, 0.08);
-		border-radius: 8px;
-		font-size: 0.875rem;
-		color: rgba(255, 255, 255, 0.85);
-	}
-
-	.contact-list {
-		display: flex;
-		flex-direction: column;
-		gap: 1rem;
+	.contact-grid {
+		margin: 0;
+		padding: 0;
 	}
 
 	.contact-row {
 		display: flex;
+		gap: 12px;
 		align-items: center;
-		gap: 1.25rem;
-		padding: 0.25rem 0;
+		margin: 8px 0;
 	}
 
-	.contact-label {
-		font-size: 0.9375rem;
-		font-weight: 600;
-		color: rgba(255, 255, 255, 0.5);
-		min-width: 90px;
+	.contact-term {
+		width: 110px;
+		font-weight: 700;
+		color: rgba(234, 238, 242, 0.78);
 	}
 
-	.contact-value {
-		font-size: 1.0625rem;
-		color: rgba(255, 255, 255, 0.85);
+	.contact-def {
+		margin: 0;
+		color: rgba(234, 238, 242, 0.9);
+		font-size: 15px;
 	}
 
-	.contact-link {
-		font-size: 1.0625rem;
-		color: rgba(255, 255, 255, 0.85);
-		text-decoration: none;
-		transition: color 160ms ease;
-	}
-
-	.contact-link:hover {
-		color: #fff;
-		text-decoration: underline;
-	}
-
-	.email-copy {
-		display: flex;
+	.copy {
+		display: inline-flex;
+		gap: 8px;
 		align-items: center;
-		gap: 0.75rem;
 		background: transparent;
-		border: none;
+		border: 0;
+		padding: 0;
+		border-radius: 0;
 		cursor: pointer;
-		transition: all 160ms ease;
+		color: inherit;
+		font: inherit;
+		font-size: 15px;
+		font-weight: 600; /* slightly bolder main text */
+		transition: color 140ms ease;
+		appearance: none;
 	}
-
-	.email-text {
-		font-size: 1.0625rem;
-		color: rgba(255, 255, 255, 0.85);
-		font-family: 'Courier New', monospace;
-		transition: color 160ms ease;
-	}
-
-	.email-copy:hover .email-text {
-		color: #fff;
-	}
-
-	.copy-hint {
-		font-size: 0.75rem;
-		color: rgba(255, 255, 255, 0.4);
-		transition: color 160ms ease;
-	}
-
-	.email-copy:hover .copy-hint {
-		color: rgba(255, 255, 255, 0.6);
-	}
-
-	.more-section {
-		display: flex;
-		align-items: center;
-		gap: 0.75rem;
-	}
-
-	.more-label {
-		font-size: 1rem;
-		font-weight: 600;
-		color: rgba(255, 255, 255, 0.5);
-	}
-
-	.more-link {
+	.copy:hover,
+	.copy:focus {
 		background: transparent;
-		border: none;
-		color: rgba(255, 255, 255, 0.85);
-		font-size: 1rem;
-		font-weight: 500;
-		cursor: pointer;
-		transition: color 160ms ease;
-		text-decoration: underline;
-		text-decoration-color: rgba(255, 255, 255, 0.2);
-		text-underline-offset: 3px;
+		transform: none;
+		box-shadow: none;
+		outline: none;
 	}
-
-	.more-link:hover {
-		color: #fff;
-		text-decoration-color: rgba(255, 255, 255, 0.5);
-	}
-
-	.more-separator {
-		color: rgba(255, 255, 255, 0.3);
-		font-size: 0.875rem;
-	}
-
-	.modal-overlay {
-		position: fixed;
-		inset: 0;
-		z-index: 10000;
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		padding: 2rem;
-	}
-
-	.modal {
-		background: rgba(30, 30, 30, 0.95);
-		backdrop-filter: blur(20px);
-		border: 1px solid rgba(255, 255, 255, 0.12);
-		border-radius: 12px;
-		width: 100%;
-		max-width: 600px;
-		height: 500px;
-		display: flex;
-		flex-direction: column;
-		box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
-	}
-
-	.modal-tabs {
-		display: flex;
-		gap: 0.25rem;
-		padding: 1rem 1rem 0;
-		border-bottom: 1px solid rgba(255, 255, 255, 0.06);
-	}
-
-	.modal-tab {
-		padding: 0.625rem 1.25rem;
+	.copy:active {
+		transform: none;
 		background: transparent;
-		border: none;
-		color: rgba(255, 255, 255, 0.45);
-		font-size: 0.875rem;
+	}
+
+	.mono {
+		font-family: "Courier New", monospace;
+		font-size: 15px;
 		font-weight: 600;
-		cursor: pointer;
-		border-radius: 6px 6px 0 0;
-		transition: all 160ms ease;
+		color: var(--text);
 	}
 
-	.modal-tab.active {
-		color: #fff;
-		background: rgba(60, 60, 60, 0.4);
+	.copied {
+		color: rgba(255, 255, 255, 0.72);
+		font-size: 11px;
+		margin-left: 5px;
+		transform: translateY(-3px);
+		line-height: 1;
 	}
 
-	.modal-tab.active::after {
-		content: '';
-		position: absolute;
-		bottom: -1px;
-		left: 0;
-		right: 0;
-		height: 2px;
-		background: rgba(255, 255, 255, 0.2);
-	}
-
-	.modal-tab:hover {
-		color: rgba(255, 255, 255, 0.7);
-	}
-
-	.modal-content {
-		overflow-y: auto;
-		padding: 1.5rem;
-		flex: 1;
-		min-height: 0;
-	}
-
-	.tech-content {
+	.chips {
 		display: flex;
-		flex-direction: column;
-		gap: 1.25rem;
-	}
-
-	.tech-category-modal {
-		display: flex;
-		align-items: baseline;
-		gap: 1rem;
-	}
-
-	.tech-category-label-modal {
-		font-size: 0.875rem;
-		font-weight: 600;
-		color: rgba(255, 255, 255, 0.5);
-		min-width: 90px;
-		flex-shrink: 0;
-	}
-
-	.tech-items-modal {
-		display: flex;
+		gap: 10px;
 		flex-wrap: wrap;
-		gap: 0.5rem;
-		align-items: center;
+		user-select: none;
 	}
 
-	.tech-item-modal {
-		padding: 0.5rem 1rem;
-		background: rgba(99, 99, 99, 0.2);
-		backdrop-filter: blur(6px);
-		border-radius: 999px;
-		font-size: 0.8125rem;
-		font-weight: 500;
-		color: rgba(255, 255, 255, 0.85);
-		box-shadow:
-			inset 0 1px 4px rgba(0, 0, 0, 0.22),
-			0 0 0 1px rgba(255, 255, 255, 0.15);
+	.actions {
+		margin-top: 6px;
 	}
 
-	.books-list {
+	.action-links {
 		display: flex;
-		flex-direction: column;
-		gap: 0.5rem;
+		align-items: center;
+		gap: 12px;
+		margin-top: 6px;
 	}
 
-	.book-item {
-		padding: 1rem 1.25rem;
-		border: none;
-		border-left: 2px solid rgba(255, 255, 255, 0.15);
-		text-align: left;
-		font-size: 0.9375rem;
-		color: rgba(255, 255, 255, 0.75);
+	.plain {
+		background: transparent;
+		border: 0;
+		color: rgba(180, 200, 255, 0.95);
+		font-weight: 700;
 		cursor: pointer;
-		transition: all 160ms ease;
-		border-radius: 2px;
+		padding: 0;
+		text-decoration: none;
+		appearance: none;
+		-webkit-appearance: none;
+		transition: color 140ms ease;
+	}
+	.plain:hover,
+	.plain:focus {
+		color: rgba(180, 200, 255, 0.95);
+		outline: none;
 	}
 
-	.book-item:hover {
-		background: rgba(60, 60, 60, 0.3);
-		border-left-color: rgba(255, 255, 255, 0.4);
-		color: rgba(255, 255, 255, 0.95);
-		padding-left: 1.5rem;
+	.dot {
+		color: rgba(234, 238, 242, 0.5);
 	}
 
-	@media (max-width: 768px) {
-		.info-container {
-			padding: 2rem 0;
-			gap: 2.5rem;
+	@media (max-width: 720px) {
+		.page {
+			padding: 28px 16px;
 		}
 
-		.name {
-			font-size: 2rem;
+		.title {
+			font-size: 28px;
 		}
 
-		.modal-overlay {
-			padding: 1rem;
-		}
-
-		.modal {
-			height: 80vh;
-			max-height: 600px;
-		}
-
-		.tech-category-modal {
-			flex-direction: column;
-			align-items: flex-start;
-			gap: 0.5rem;
-		}
-
-		.tech-category-label-modal {
-			min-width: 0;
-		}
-
-		.more-section {
-			flex-wrap: wrap;
+		.contact-term {
+			width: 92px;
 		}
 	}
 </style>

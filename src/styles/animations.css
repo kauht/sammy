@@ -1,0 +1,51 @@
+:root {
+	--anim-fast: 150ms;
+	--anim-medium: 300ms;
+	--anim-long: 600ms;
+
+	--anim-ease: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes slideDown {
+	from {
+		opacity: 0;
+		transform: translateY(-20px);
+	}
+	to {
+		opacity: 1;
+		transform: translateY(0);
+	}
+}
+
+@keyframes slideUp {
+	from {
+		opacity: 1;
+		transform: translateY(0);
+	}
+	to {
+		opacity: 0;
+		transform: translateY(-20px);
+	}
+}
+
+@keyframes popIn {
+	from {
+		opacity: 0;
+		transform: scale(0.98);
+	}
+	to {
+		opacity: 1;
+		transform: scale(1);
+	}
+}
+.micro-animate {
+	animation: popIn var(--anim-fast) var(--anim-ease) both;
+}
+
+.transition-default {
+	transition:
+		color var(--anim-fast) var(--anim-ease),
+		background var(--anim-fast) var(--anim-ease),
+		transform var(--anim-fast) var(--anim-ease),
+		opacity var(--anim-fast) var(--anim-ease);
+}

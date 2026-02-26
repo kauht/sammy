@@ -4,45 +4,45 @@
 	import { cubicOut } from 'svelte/easing';
 	import Work from './work/+page.svelte';
 	import Notes from './notes/+page.svelte';
+	import Blog from './blog/+page.svelte';
 	import Info from './info/+page.svelte';
 
-	const pageOrder = ['info', 'work', 'blog', 'notes'];
-	const validPages = new Set(pageOrder);
+	// strongly-typed pages
+	const pageOrder = ['info', 'work', 'blog', 'notes'] as const;
+	type Page = (typeof pageOrder)[number];
 
-	const initialPage = (() => {
+	const validPages: Set<Page> = new Set(pageOrder);
+
+	function getHashPage(): Page {
 		if (typeof window === 'undefined') return 'info';
-		const hash = window.location.hash.slice(1);
+		const hash = window.location.hash.slice(1) as Page;
 		return validPages.has(hash) ? hash : 'info';
-	})();
-
-	let currentPage = $state(initialPage);
-	let direction = $state(1);
-	let notesData = $state<{ name: string; path: string; children?: any[] } | null>(null);
-
-	function handleHashChange() {
-		const hash = window.location.hash.slice(1) || 'info';
-		if (validPages.has(hash) && hash !== currentPage) {
-			window.scrollTo({ top: 0, behavior: 'instant' });
-			const prevIndex = pageOrder.indexOf(currentPage);
-			const currIndex = pageOrder.indexOf(hash);
-			direction = currIndex > prevIndex ? 1 : -1;
-			currentPage = hash;
-		}
 	}
 
-	async function loadNotesData() {
-		try {
-			const response = await fetch('/api/notes/tree');
-			notesData = await response.json();
-		} catch {
-			notesData = null;
+	let currentPage: Page = getHashPage();
+	let direction = 1; // positive => forward, negative => backward
+
+	function handleHashChange(): void {
+		const hash = getHashPage();
+		if (hash === currentPage) return;
+
+		const prevIndex = pageOrder.indexOf(currentPage);
+		const currIndex = pageOrder.indexOf(hash);
+		direction = currIndex > prevIndex ? 1 : -1;
+		currentPage = hash;
+
+		// scroll to top when switching pages (presence check, no try/catch)
+		if (typeof window !== 'undefined' && typeof window.scrollTo === 'function') {
+			// older browsers may ignore options but this is fine
+			window.scrollTo({ top: 0, left: 0 });
 		}
 	}
 
 	onMount(() => {
 		window.addEventListener('hashchange', handleHashChange);
-		loadNotesData();
-		return () => window.removeEventListener('hashchange', handleHashChange);
+		return () => {
+			window.removeEventListener('hashchange', handleHashChange);
+		};
 	});
 </script>
 
@@ -58,13 +58,9 @@
 			{:else if currentPage === 'work'}
 				<Work />
 			{:else if currentPage === 'blog'}
-				<div class="placeholder">Blog coming soon...</div>
+				<Blog />
 			{:else if currentPage === 'notes'}
-				{#if notesData}
-					<Notes data={notesData} />
-				{:else}
-					<div class="loading-text">Loading notes...</div>
-				{/if}
+				<Notes />
 			{/if}
 		</div>
 	{/key}

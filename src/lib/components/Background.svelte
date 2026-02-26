@@ -15,7 +15,12 @@
 		position: fixed;
 		inset: 0;
 		z-index: -10;
-		background: radial-gradient(ellipse at 50% 50%, #202020, #181818 50%, #0a0a0a);
+		background: radial-gradient(
+			ellipse at 50% 50%,
+			var(--surface-01),
+			var(--bg-01) 50%,
+			var(--bg-canvas)
+		);
 		pointer-events: none;
 	}
 	.pattern {

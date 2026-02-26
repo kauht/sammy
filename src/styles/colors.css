@@ -1,0 +1,27 @@
+:root {
+	/* Backgrounds */
+	--bg-canvas: #0a0a0a;
+	--bg-01: #101010;
+	--bg-02: #1c1c1c;
+
+	/* Surfaces */
+	--surface-01: #2d2d2d;
+	--surface-02: #3a3a3a;
+	--surface-trans: #63636333;
+
+	/* Text */
+	--text: #ffffff;
+	--text-muted: #bfbfbf;
+	--text-subtle: #8a8a8a;
+
+	/* Borders */
+	--border: #ffffff0f;
+	--divider: #ffffff08;
+
+	/* Accents */
+	--accent-01: #60a5fa;
+	--accent-02: #7c3aed;
+
+	/* Highlights */
+	--glow: #d9d9d9;
+}

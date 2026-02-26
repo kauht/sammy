@@ -1,20 +1,10 @@
 <script lang="ts">
-	import projectsData from '$data/projects.json';
+	import projects from "../../data/projects.json";
+	import Chip from "$lib/components/Chip.svelte";
 
-	type Project = {
-		name: string;
-		type: 'WIP' | 'Complete' | 'Contribution';
-		description: string;
-		tags: string[];
-		source: string;
-		image: string;
-	};
-
-	const projects: Project[] = projectsData;
-
-	const currentProjects = projects.filter((p) => p.type === 'WIP');
-	const pastProjects = projects.filter((p) => p.type === 'Complete');
-	const contributions = projects.filter((p) => p.type === 'Contribution');
+	const currentProjects = projects.filter((p) => p.type === "WIP");
+	const pastProjects = projects.filter((p) => p.type === "Complete");
+	const contributions = projects.filter((p) => p.type === "Contribution");
 </script>
 
 <div class="work-container">
@@ -35,19 +25,19 @@
 					<div class="project-content">
 						<div class="project-header">
 							<h2 class="project-name">{project.name}</h2>
-							<a
-								href={project.source}
-								target="_blank"
-								rel="noopener noreferrer"
+							<button
+								type="button"
 								class="source-link"
+								on:click={() => window.open(project.source, "_blank", "noopener,noreferrer")}
+								aria-label="Open source link"
 							>
 								source
-							</a>
+							</button>
 						</div>
 						<p class="project-description">{project.description}</p>
 						<div class="tech-stack">
 							{#each project.tags as tag (tag)}
-								<span class="tech-tag">{tag}</span>
+								<Chip size="sm">{tag}</Chip>
 							{/each}
 						</div>
 					</div>
@@ -73,19 +63,19 @@
 					<div class="project-content">
 						<div class="project-header">
 							<h2 class="project-name">{project.name}</h2>
-							<a
-								href={project.source}
-								target="_blank"
-								rel="noopener noreferrer"
+							<button
+								type="button"
 								class="source-link"
+								on:click={() => window.open(project.source, "_blank", "noopener,noreferrer")}
+								aria-label="Open source link"
 							>
 								source
-							</a>
+							</button>
 						</div>
 						<p class="project-description">{project.description}</p>
 						<div class="tech-stack">
 							{#each project.tags as tag (tag)}
-								<span class="tech-tag">{tag}</span>
+								<Chip size="sm">{tag}</Chip>
 							{/each}
 						</div>
 					</div>
@@ -111,19 +101,17 @@
 					<div class="project-content">
 						<div class="project-header">
 							<h2 class="project-name">{project.name}</h2>
-							<a
-								href={project.source}
-								target="_blank"
-								rel="noopener noreferrer"
+							<button
 								class="source-link"
+								on:click={() => window.open(project.source, "_blank", "noopener,noreferrer")}
 							>
 								source
-							</a>
+							</button>
 						</div>
 						<p class="project-description">{project.description}</p>
 						<div class="tech-stack">
 							{#each project.tags as tag (tag)}
-								<span class="tech-tag">{tag}</span>
+								<Chip size="sm">{tag}</Chip>
 							{/each}
 						</div>
 					</div>
@@ -233,8 +221,8 @@
 	.source-link {
 		font-size: 0.8125rem;
 		font-weight: 500;
+		background-color: rgba(0, 0, 0, 0);
 		color: rgba(255, 255, 255, 0.5);
-		text-decoration: none;
 		transition: color 150ms ease;
 		white-space: nowrap;
 	}
@@ -257,17 +245,6 @@
 		gap: 0.5rem;
 		margin-top: auto;
 		padding-top: 0.5rem;
-	}
-
-	.tech-tag {
-		font-size: 0.75rem;
-		font-weight: 500;
-		color: rgba(255, 255, 255, 0.8);
-		background: rgba(99, 99, 99, 0.3);
-		padding: 0.25rem 0.75rem;
-		border-radius: 999px;
-		border: 1px solid rgba(255, 255, 255, 0.08);
-		letter-spacing: 0.02em;
 	}
 
 	@media (max-width: 768px) {

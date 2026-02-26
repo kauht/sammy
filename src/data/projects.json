@@ -8,6 +8,14 @@
 		"image": ""
 	},
 	{
+		"name": "Hecate",
+		"type": "WIP",
+		"description": "Cross-platform process manipulation framework",
+		"tags": ["C++", "Cross-Platform", "Bypass"],
+		"source": "https://github.com/kauht/Hecate",
+		"image": ""
+	},
+	{
 		"name": "Metis",
 		"type": "WIP",
 		"description": "A chess engine implementing minimax with alpha-beta pruning.",
@@ -38,6 +46,14 @@
 		"tags": ["Assembly", "C", "Systems"],
 		"source": "https://github.com/kauht/sammy-crt",
 		"image": ""
+	},
+	{
+		"name": "pascal",
+		"type": "Complete",
+		"description": "Very simple pascal triangle generator",
+		"tags": ["Pascal", "CLI"],
+		"source": "",
+		"image": "/pascal.png"
 	},
 	{
 		"name": "ADAN",

@@ -6,11 +6,11 @@
 		%sveltekit.head%
 		<script>
 			const hash = window.location.hash.slice(1);
-			const validPages = ['work', 'notes', 'info'];
-			const currentPage = validPages.includes(hash) ? hash : 'work';
+			const validPages = ["work", "notes", "info"];
+			const currentPage = validPages.includes(hash) ? hash : "info";
 
-			if (window.location.hash !== '#' + currentPage) {
-				history.replaceState(null, '', '#' + currentPage);
+			if (window.location.hash !== "#" + currentPage) {
+				history.replaceState(null, "", "#" + currentPage);
 			}
 		</script>
 	</head>
