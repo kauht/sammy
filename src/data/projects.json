@@ -2,7 +2,7 @@
 	{
 		"name": "Pallas",
 		"type": "WIP",
-		"description": "A modern systems language you actually want to use.",
+		"description": "A modern systems language you'll actually want to use.",
 		"tags": ["C++", "Compiler Design", "Language Design"],
 		"source": "https://github.com/kauht/Pallas",
 		"image": ""
@@ -10,7 +10,7 @@
 	{
 		"name": "Hecate",
 		"type": "WIP",
-		"description": "Cross-platform process manipulation framework",
+		"description": "Cross-platform process manipulation and game hacking framework",
 		"tags": ["C++", "Cross-Platform", "Bypass"],
 		"source": "https://github.com/kauht/Hecate",
 		"image": ""
@@ -18,7 +18,7 @@
 	{
 		"name": "Metis",
 		"type": "WIP",
-		"description": "A chess engine implementing minimax with alpha-beta pruning.",
+		"description": "My own full and unique chess engine implementation.",
 		"tags": ["C++", "Algorithms"],
 		"source": "https://github.com/kauht/Metis",
 		"image": ""
